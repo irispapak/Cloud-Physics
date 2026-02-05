@@ -4,13 +4,6 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-import pandas as pd
-
-# -----------------------------------------------------------------------------------------------------
-u = np.zeros(12000000)
-r = np.zeros(12000000)
-t = np.zeros(12000000)
-z = np.zeros(12000000)
 
 # constants
 
@@ -36,10 +29,10 @@ ro = 15*10**(-6)      # m
 z_base = 2000         # m
 depth = 6000          # m
 
-u[0] = 0              # m/s
-t[0] = 0              # s
-z[0] = zo + z_base    # m
-r[0] = ro             # m
+u = [0.0]             # m/s
+t = [0.0]             # s
+z = [zo + z_base]     # m
+r = [ro]              # m
 
 # temperature at starting point
 T = 10-0.005*250
@@ -56,17 +49,19 @@ while u[i] <= w:
 
     # velocity
     if r[i-1] < 40*10**(-6):
-        u[i] = k1*r[i-1]**2
+        u_new = k1*r[i-1]**2
     elif r[i-1] >= 40*10**(-6) and r[i-1] <= 600*10**(-6):
-        u[i] = k2*r[i-1]
+        u_new = k2*r[i-1]
     elif r[i-1] > 600*10**(-6) and r[i-1] < 2*10**(-3):
-        u[i] = k3*r[i-1]**(0.5)
+        u_new = k3*r[i-1]**(0.5)
     else:
-        u[i] = k4*r[i-1]**(0.5)
+        u_new = k4*r[i-1]**(0.5)
 
-    if u[i] >= w:
+    if u_new >= w:
         i = i - 1
         break
+
+    u.append(u_new)
 
     # collection efficiency
     if r[i-1] <= r_coll[j]*10**(-6):
@@ -75,10 +70,10 @@ while u[i] <= w:
             j = j + 1
            
     # radius, height, time   
-    z[i] = z[i-1] + dz
-    dr = E*M/(4*rl) * u[i]/(w-u[i]) * dz
-    r[i] = r[i-1] + dr
-    t[i] = t[i-1] + dz/(w-u[i])
+    z.append(z[i-1] + dz)
+    dr = E*M/(4*rl) * u_new/(w-u_new) * dz
+    r.append(r[i-1] + dr)
+    t.append(t[i-1] + dz/(w-u_new))
 
 
 t_asc = t[i]/60
@@ -103,26 +98,30 @@ while z[i] >= z_base :
 
     i = i + 1
     # height
-    z[i] = z[i-1] - dz
+    z_new = z[i-1] - dz
     
-    if z[i] < z_base :
+    if z_new < z_base :
         i = i - 1
         break
 
+    z.append(z_new)
+
     # velocity
     if r[i-1] < 40*10**(-6):
-        u[i] = k1*r[i-1]**2
+        u_new = k1*r[i-1]**2
     elif r[i-1] >= 40*10**(-6) and r[i-1] <= 600*10**(-6):
-        u[i] = k2*r[i-1]
+        u_new = k2*r[i-1]
     elif r[i-1] > 600*10**(-6) and r[i-1] < 2*10**(-3):
-        u[i] = k3*r[i-1]**(1/2)
+        u_new = k3*r[i-1]**(1/2)
     else:   
-        u[i] = k4*r[i-1]**(1/2)
+        u_new = k4*r[i-1]**(1/2)
+
+    u.append(u_new)
 
     # radius, time
-    dr = E*M/(4*rl) * dz * u[i]/(u[i]-w)
-    r[i] = r[i-1] + dr
-    t[i] = t[i-1] + dz/(u[i]-w)
+    dr = E*M/(4*rl) * dz * u_new/(u_new-w)
+    r.append(r[i-1] + dr)
+    t.append(t[i-1] + dz/(u_new-w))
    
 index_cloud = i
 t_cloud = t[i]/60
@@ -156,17 +155,21 @@ while z[i] >= 0:
 
     i = i + 1
     # velocity, height, time
-    u[i] = u[i-1]
-    dz = u[i]*dt
-    z[i] = z[i-1] - dz
-    t[i] = t[i-1] + dt
+    u_new = u[i-1]
+    dz_var = u_new*dt
+    z_new = z[i-1] - dz_var
+    t_new = t[i-1] + dt
     
-    if z[i] < 0:
+    if z_new < 0:
         i = i - 1
         break
 
+    u.append(u_new)
+    z.append(z_new)
+    t.append(t_new)
+
     # radius
-    r[i] = (r[i-1]**2+2*c*dt)**(1/2)
+    r.append((r[i-1]**2+2*c*dt)**(1/2))
 
 
 r_ground = r[i]*1000
@@ -178,15 +181,15 @@ print('Difference between the raindrop at cloud base and raindrop at ground = ',
 ########################################################
 # plot 1
 
-height = z[0:i+1]/1000
-radius = r[0:i+1]*1000
-time = t[0:i+1]/60
-velocity = u[0:i+1]
+height = np.array(z[0:i+1])/1000
+radius = np.array(r[0:i+1])*1000
+time = np.array(t[0:i+1])/60
+velocity = np.array(u[0:i+1])
 
 
-height_cloud = z[0:index_cloud+1]/1000
-time_cloud = t[0:index_cloud+1]/60
-radius_cloud = r[0:index_cloud+1]*1000
+height_cloud = np.array(z[0:index_cloud+1])/1000
+time_cloud = np.array(t[0:index_cloud+1])/60
+radius_cloud = np.array(r[0:index_cloud+1])*1000
 
 
 fig1, ax1 = plt.subplots()
@@ -195,8 +198,8 @@ ax1.tick_params(axis="x",direction="in")
 plt.plot(radius,height)
 plt.xlabel('r (mm)', labelpad = 10)
 plt.ylabel('H (km)', labelpad = 10)
-plt.xlim(-0.1,7.,1)
-plt.ylim(0,8,1)
+plt.xlim(-0.1, 7.)
+plt.ylim(0, 8)
 plt.title('Height with radius of droplet', y = 1.02)            
 plt.savefig('height-radius.jpg')
 
@@ -209,8 +212,8 @@ ax2.tick_params(axis="x",direction="in")
 plt.plot(time, height, color='red')
 plt.xlabel('t (min)', labelpad = 10)
 plt.ylabel('H (km)' , labelpad = 10)
-plt.ylim(0,8,0.5)
-plt.xlim(0,30,2)
+plt.ylim(0, 8)
+plt.xlim(0, 30)
 plt.title('Height with time', y = 1.02)            
 plt.savefig('height-time.jpg')
 
@@ -223,10 +226,10 @@ ax3.tick_params(axis="x",direction="in")
 plt.plot(radius_cloud, height_cloud, color='green')
 plt.xlabel('R (mm)', labelpad = 10)
 plt.ylabel('H (km)' , labelpad = 10)
-plt.ylim(2,8,0.5)
-plt.xlim(-0.1,7.,1)
+plt.ylim(2, 8)
+plt.xlim(-0.1, 7.)
 plt.title('Height with radius inside the cloud', y = 1.02)        
-plt.savefig('height-radius.jpg')
+plt.savefig('cloud-height-radius.jpg')
 
 # plot 4
 plt.clf()
@@ -237,8 +240,8 @@ ax4.tick_params(axis="x",direction="in")
 plt.plot(velocity, height, color='green')
 plt.xlabel('u (m/s)', labelpad = 10)
 plt.ylabel('H (km)' , labelpad = 10)
-plt.ylim(0,8.,1)
-plt.xlim(0,18,1)
+plt.ylim(0, 8.)
+plt.xlim(0, 18)
 plt.title('Height with velocity of droplet', y = 1.02)        
 plt.savefig('height-velocity.jpg')
 
@@ -251,7 +254,7 @@ ax5.tick_params(axis="x",direction="in")
 plt.plot( radius, velocity, color='orange')
 plt.ylabel('u (m/s)', labelpad = 10)
 plt.xlabel('r (mm)' , labelpad = 10)
-plt.ylim(0,18.,1)
-plt.xlim(0,7.,1)
+plt.ylim(0, 18.)
+plt.xlim(0, 7.)
 plt.title('Velocity with radius of droplet', y = 1.02)        
 plt.savefig('velocity-radius.jpg')
