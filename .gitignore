@@ -6,3 +6,6 @@ docs/
 
 # Python cache
 **/__pycache__/
+
+# Tool metadata
+.gemini/
