@@ -24,38 +24,37 @@ pip install numpy matplotlib
 Run the main simulation script:
 
 ```bash
-python3 cloud_physics_project.py
+python3 project-01-cloud-physics/src/cloud_physics_project.py
 ```
 
 The script will:
 - Simulate the trajectory of a droplet.
 - Print key statistics (max height, time in cloud, size at ground) to the console.
-- Generate and save visualization plots in the current directory.
+- Generate and save visualization plots under `project-01-cloud-physics/outputs/plots/`.
 
 ## Simulation Outputs
 
 ### 1. Droplet Trajectory (Height vs Radius)
 Shows the path of the droplet as it rises (grows) and falls.
-![Height vs Radius](height-radius.jpg)
+![Height vs Radius](project-01-cloud-physics/outputs/plots/height-radius.jpg)
 
 ### 2. Time Evolution
 Tracks the altitude of the droplet over time.
-![Height vs Time](height-time.jpg)
+![Height vs Time](project-01-cloud-physics/outputs/plots/height-time.jpg)
 
 ### 3. Dynamics (Velocity vs Radius)
 Illustrates how terminal velocity increases as the droplet grows.
-![Velocity vs Radius](velocity-radius.jpg)
+![Velocity vs Radius](project-01-cloud-physics/outputs/plots/velocity-radius.jpg)
 
 ### 4. Cloud Phase Detail
 Focuses on the growth phase within the cloud boundaries.
-![Cloud Phase](cloud-height-radius.jpg)
+![Cloud Phase](project-01-cloud-physics/outputs/plots/cloud-height-radius.jpg)
 
-## Code Structure
+## Repository Layout
 
-- `cloud_physics_project.py`: Main simulation class `CloudDropletSimulation`.
-    - `PhysicsConstants`: Dataclass containing physical parameters (LWC, densities, constants).
-    - `run()`: Executes the three phases of the droplet life.
-    - `save_plots()`: Generates analysis figures.
+- `project-01-cloud-physics/src/cloud_physics_project.py`: Main simulation script.
+- `project-01-cloud-physics/outputs/plots/`: Generated figures.
+- `project-01-cloud-physics/docs/`: Notes and walkthroughs.
 
 ## License
 [MIT](LICENSE.md)

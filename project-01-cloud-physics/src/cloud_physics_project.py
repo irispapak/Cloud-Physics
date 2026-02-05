@@ -2,8 +2,13 @@
 
 """ This program describes the motion of a droplet inside and outside a cloud until it reaches the ground, using a simplified approach. """
 
+from pathlib import Path
+
 import numpy as np
 import matplotlib.pyplot as plt
+
+OUTPUT_DIR = Path(__file__).resolve().parent.parent / "outputs" / "plots"
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # constants
 
@@ -201,7 +206,7 @@ plt.ylabel('H (km)', labelpad = 10)
 plt.xlim(-0.1, 7.)
 plt.ylim(0, 8)
 plt.title('Height with radius of droplet', y = 1.02)            
-plt.savefig('height-radius.jpg')
+plt.savefig(OUTPUT_DIR / "height-radius.jpg")
 
 # plot 2
 plt.clf()
@@ -215,7 +220,7 @@ plt.ylabel('H (km)' , labelpad = 10)
 plt.ylim(0, 8)
 plt.xlim(0, 30)
 plt.title('Height with time', y = 1.02)            
-plt.savefig('height-time.jpg')
+plt.savefig(OUTPUT_DIR / "height-time.jpg")
 
 # plot 3
 plt.clf()
@@ -229,7 +234,7 @@ plt.ylabel('H (km)' , labelpad = 10)
 plt.ylim(2, 8)
 plt.xlim(-0.1, 7.)
 plt.title('Height with radius inside the cloud', y = 1.02)        
-plt.savefig('cloud-height-radius.jpg')
+plt.savefig(OUTPUT_DIR / "cloud-height-radius.jpg")
 
 # plot 4
 plt.clf()
@@ -243,7 +248,7 @@ plt.ylabel('H (km)' , labelpad = 10)
 plt.ylim(0, 8.)
 plt.xlim(0, 18)
 plt.title('Height with velocity of droplet', y = 1.02)        
-plt.savefig('height-velocity.jpg')
+plt.savefig(OUTPUT_DIR / "height-velocity.jpg")
 
 # plot 5
 plt.clf()
@@ -257,4 +262,4 @@ plt.xlabel('r (mm)' , labelpad = 10)
 plt.ylim(0, 18.)
 plt.xlim(0, 7.)
 plt.title('Velocity with radius of droplet', y = 1.02)        
-plt.savefig('velocity-radius.jpg')
+plt.savefig(OUTPUT_DIR / "velocity-radius.jpg")

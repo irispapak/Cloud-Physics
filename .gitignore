@@ -1,0 +1,8 @@
+# Ignore markdown files except README.md
+docs/
+
+# KDE/Dolphin metadata
+**/.directory
+
+# Python cache
+**/__pycache__/
